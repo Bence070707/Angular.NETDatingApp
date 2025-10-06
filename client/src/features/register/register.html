@@ -1,0 +1,26 @@
+<form>
+    <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 gap-6">
+        <legend class="fieldset-legend text-xl">Register</legend>
+
+        <label class="floating-label">
+            <span>Display Name</span>
+            <input class="input input-md" type="text" name="displayName" id="displayName"
+                [(ngModel)]="creds.displayName" placeholder="Display Name">
+        </label>
+
+        <label class="floating-label">
+            <span>Password</span>
+            <input class="input input-md" type="password" name="password" id="password" [(ngModel)]="creds.password"
+                placeholder="Password">
+        </label>
+
+        <label class="floating-label">
+            <span>Email</span>
+            <input class="input input-md" type="email" name="email" id="email" [(ngModel)]="creds.email"
+                placeholder="Email">
+        </label>
+
+        <button (click)="register()" class="btn btn-neutral">Register</button>
+        <button (click)="cancel()" class="btn btn-soft">Cancel</button>
+    </fieldset>
+</form>

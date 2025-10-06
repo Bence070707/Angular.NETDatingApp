@@ -1,12 +1,2 @@
-<div class="card bg-base-100 w-1/2 mx-auto p-10 mt-10 shadow-xl">
-    <ul class="list">
-    @for (item of members(); track $index) {
-            <li class="list-row items-center">
-                <img src="/user.png" alt="user avatar" class="size-12 rounded-box">
-                <div>
-                    {{ item.displayName }}
-                </div>
-            </li>
-        }
-    </ul>
-</div>
+<app-navbar></app-navbar>
+<app-home></app-home>
