@@ -14,7 +14,8 @@ public static class AppUser2UserDTO
             Id = loginDTO.Id,
             DisplayName = loginDTO.DisplayName,
             Email = loginDTO.Email,
-            Token = token
+            Token = token,
+            ImageUrl = loginDTO.ImageUrl
         };
     }
 }
