@@ -6,6 +6,7 @@ import { Router, RouterLink } from "@angular/router";
 import { RouterLinkActive } from "@angular/router";
 import { ToastService } from '../../core/services/toast-service';
 import { themes } from '../theme';
+import { LoadingService } from '../../core/services/loading-service';
 
 @Component({
   selector: 'app-navbar',
@@ -19,6 +20,7 @@ export class Navbar implements OnInit {
   private router = inject(Router);
   private toasts = inject(ToastService);
   protected selectedTheme = signal<string>(localStorage.getItem("theme") ?? "light");
+  protected loadingService = inject(LoadingService);
   protected themes = themes;
   
   ngOnInit(): void {

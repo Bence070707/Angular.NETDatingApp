@@ -1,4 +1,4 @@
-@if(member(); as member){
+@if(memberService.member(); as member){
     <div class="flex gap-6">
         <div class="card bg-base-100 flex flex-col h-[85vh] w-1/4">
             <img src="{{member.imageUrl || '/user.png'}}" class="rounded-full mx-10 mt-3 object-cover" alt="image of member">
@@ -21,12 +21,17 @@
                 </ul>
             </div>
             <div class="card-actions justify-between gap-2 px-2 mb-3">
-                <button class="btn btn-info flex-1">Go back</button>
+                <button (click)="back()" class="btn btn-info flex-1">Go back</button>
                 <button class="btn btn-primary flex-1">Like user</button>
             </div>
         </div>
         <div class="card w-3/4 bg-base-100 p-6">
-            <h3 class="card title text-3xl text-primary">{{title()}}</h3>
+            <div class="flex justify-between items-center">
+                <h3 class="card title text-3xl text-primary">{{title()}}</h3>
+                @if(isCurrentUser()){
+                    <button (click)="memberService.editMode.set(!memberService.editMode())" class="btn btn-outline btn-primary">{{memberService.editMode() ? "Save" : "Edit"}}</button>
+                }
+            </div>
             <div class="divider"></div>
             <div>
                 <router-outlet></router-outlet>

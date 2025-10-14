@@ -5,7 +5,7 @@
     @if(member.gender == "male"){
 
         <div class="card-actions absolute bottom-0 w-full px-3 py-1 rounded-b-lg
-            bg-gradient-to-t from-black via-black/75 to-transparent z-10">
+            bg-gradient-to-t from-primary via-primary/75 to-transparent">
         <div class="flex flex-col text-white">
             <span class="font-semibold">{{member.displayName}}, {{member.dateOfBirth | age}}</span>
             <span class="text-sm">{{member.city}}</span>
@@ -14,7 +14,7 @@
     }
     @else {
         <div class="card-actions absolute bottom-0 w-full px-3 py-1 rounded-b-lg
-            bg-gradient-to-t from-red-300 via-red-300/75 to-transparent z-10">
+            bg-gradient-to-t from-secondary via-secondary/75 to-transparent">
         <div class="flex flex-col text-white">
             <span class="font-semibold">{{member.displayName}}, 25</span>
             <span class="text-sm">{{member.city}}</span>

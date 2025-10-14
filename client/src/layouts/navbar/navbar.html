@@ -20,6 +20,11 @@
             <a routerLink="/testerrors" routerLinkActive="text-accent">Test Errors</a>
         </nav>
 
+        
+
+        @if(loadingService.busyRequestCount() > 0){
+        <span class="mx-auto loading loading-xl loading-infinity text-primary"></span>
+    }
         <div class="flex align-middle ml-auto gap-3">
             <div class="dropdown mr-5 dropdown-end">
                 <button tabindex="1"
@@ -31,9 +36,9 @@
                     </svg>
                     <span>{{selectedTheme()}}</span>
                 </button>
-                <ul tabindex="1" class="dropdown-content menu bg-base-100 rounded-box z-20 w-52 p-2 shadow-sm z-50 relative">
+                <ul tabindex="1" class="dropdown-content menu bg-base-100 rounded-box w-52 p-2 shadow-sm">
                     @for (theme of themes; track $index) {
-                    <li class="z-50 relative"><a (click)="changeTheme(theme)">{{ theme }}</a></li>
+                    <li><a (click)="changeTheme(theme)">{{ theme }}</a></li>
                     }
                 </ul>
             </div>
@@ -44,8 +49,8 @@
                     <span>{{ user.displayName }}</span>
                 </div>
                 <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                    <li><a>Edit profile</a></li>
-                    <li><a (click)="logout()">Logout</a></li>
+                    <li onclick="document.activeElement.blur()"><a routerLink="/members/{{user.id}}">Edit profile</a></li>
+                    <li onclick="document.activeElement.blur()"><a (click)="logout()">Logout</a></li>
                 </ul>
             </div>
             }
