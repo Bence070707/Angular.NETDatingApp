@@ -1,6 +1,6 @@
 @if(member; as member){
 <div routerLink="/members/{{member.id}}" class="card cursor-pointer transition-all duration-300 ease-in-out transform hover:-translate-y-2">
-    <img class="rounded-lg" [src]="member.imageUrl" alt="Card image cap">
+    <img class="rounded-lg" [src]="member.imageUrl || '/user.png'" alt="Card image cap">
 
     @if(member.gender == "male"){
 

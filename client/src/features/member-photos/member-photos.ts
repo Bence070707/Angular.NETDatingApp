@@ -28,11 +28,15 @@ export class MemberPhotos implements OnInit {
         this.memberService.editMode.set(false);
         this.loading.set(false);
         this.photos.update(photos => [...photos, photo]);
+        if(!this.memberService.member()?.imageUrl){
+          this.setMainLocalPhoto(photo);
+        }
       },
-      error: (err) => {this.loading.set(false)
+      error: (err) => {
+        this.loading.set(false)
 
         console.log("Error uploading photo", err);
-        
+
       }
     });
   }
@@ -42,33 +46,38 @@ export class MemberPhotos implements OnInit {
     if (memberId) {
       this.memberService.getMemberPhotos(memberId).subscribe(
         {
-          next: photos => this.photos.set(photos)
+          next: photos => this.photos.set(photos),
+          error: err => console.log("Error loading photos", err)
         }
       );
     }
   }
 
-  setMainPhoto(photo:Photo){
+  setMainPhoto(photo: Photo) {
     this.memberService.setMainPhoto(photo).subscribe({
       next: () => {
-        const currentUser = this.accountService.getCurrentUser();
-        if(currentUser){
-          currentUser.imageUrl = photo.url;
-          this.accountService.setCurrentUser(currentUser);
-          this.memberService.member.update(member => ({
-            ...member,
-            imageUrl: photo.url
-          }) as Member);
-        }
-      }
-    })
-  }
-
-  deletePhoto(photoId : number){
-    this.memberService.deletePhoto(photoId).subscribe({
-      next: () => {
-        this.photos.update(photos => photos.filter(p => p.id !== photoId));
+        this.setMainLocalPhoto(photo);
       }
     });
+}
+
+deletePhoto(photoId: number) {
+  this.memberService.deletePhoto(photoId).subscribe({
+    next: () => {
+      this.photos.update(photos => photos.filter(p => p.id !== photoId));
+    }
+  });
+}
+
+  private setMainLocalPhoto(photo: Photo) {
+  const currentUser = this.accountService.getCurrentUser();
+  if (currentUser) {
+    currentUser.imageUrl = photo.url;
+    this.accountService.setCurrentUser(currentUser);
+    this.memberService.member.update(member => ({
+      ...member,
+      imageUrl: photo.url
+    }) as Member);
   }
+}
 }

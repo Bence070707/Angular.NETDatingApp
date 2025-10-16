@@ -1,26 +1,61 @@
-<form>
+@if(currentStep()==1){
+<form [formGroup]="credsForm" class="steps">
     <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 gap-6">
+        <ul class="steps">
+            <li class="step step-primary">Credentials</li>
+            <li class="step" [class.step-primary]="currentStep() === 2">Profile</li>
+        </ul>
         <legend class="fieldset-legend text-xl">Register</legend>
 
-        <label class="floating-label">
-            <span>Display Name</span>
-            <input class="input input-md" type="text" name="displayName" id="displayName"
-                [(ngModel)]="creds.displayName" placeholder="Display Name">
-        </label>
+        <app-text-input label="Email" formControlName="email"></app-text-input>
 
-        <label class="floating-label">
-            <span>Password</span>
-            <input class="input input-md" type="password" name="password" id="password" [(ngModel)]="creds.password"
-                placeholder="Password">
-        </label>
+        <app-text-input label="Display Name" formControlName="displayName"></app-text-input>
 
-        <label class="floating-label">
-            <span>Email</span>
-            <input class="input input-md" type="email" name="email" id="email" [(ngModel)]="creds.email"
-                placeholder="Email">
-        </label>
+        <app-text-input label="Password" formControlName="password" [type]="'password'"></app-text-input>
+        <app-text-input label="Confirm Password" formControlName="confirmPassword" [type]="'password'"></app-text-input>
 
-        <button (click)="register()" class="btn btn-neutral">Register</button>
+        <button [disabled]="!credsForm.valid" (click)="nextStep()" class="btn btn-neutral">Next</button>
         <button (click)="cancel()" class="btn btn-soft">Cancel</button>
     </fieldset>
 </form>
+}
+@if(currentStep()==2){
+<form [formGroup]="profileForm" class="steps">
+    <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 gap-6">
+        <ul class="steps">
+                <li class="step step-primary">Credentials</li>
+                <li class="step" [class.step-primary]="currentStep() === 2">Profile</li>
+            </ul>
+        <legend class="fieldset-legend text-xl">Profile Details</legend>
+
+        <div class="flex items-center gap-4">
+            <div class="font-semibold">Gender: </div>
+            <label  class="flex gap-3 items-center">
+                <span>Male</span>
+                <input type="radio" formControlName="gender" value="male"
+                class="radio radio-primary">
+            </label>
+            <label  class="flex gap-3 items-center">
+                <span>Female</span>
+                <input type="radio" formControlName="gender" value="female"
+                class="radio radio-primary">
+            </label>
+        </div>
+        <app-text-input [maxDate]="getMaxDate()" label="Date of Birth" formControlName="dateOfBirth" [type]="'date'"></app-text-input>
+        <app-text-input label="City" formControlName="city"></app-text-input>
+        <app-text-input label="Country" formControlName="country"></app-text-input>
+            <button (click)="prevStep()" class="btn btn-neutral">Previous</button>
+            <button [disabled]="!profileForm.valid" (click)="register()" class="btn btn-primary">Register</button>
+            <button (click)="cancel()" class="btn btn-soft">Cancel</button>
+    </fieldset>
+</form>
+@if(validationsErrors().length > 0){
+    <div class="mt-5 flex bg-gray-200 rounded-2xl w-1/2 p-3 mx-auto">
+        <ul class="flex flex-col text-error space-y-1">
+            @for (error of validationsErrors(); track $index) {
+                <li>{{error}}</li>
+            }
+        </ul>
+    </div>
+}
+}
