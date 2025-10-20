@@ -48,7 +48,7 @@ namespace API.Controllers
         public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDTO)
         {
             var user = await database.Users.SingleOrDefaultAsync(x => x.Email.ToLower() == loginDTO.Email.ToLower());
-            if (user is null) return NotFound("Account not present in the database.");
+            if (user is null) return BadRequest("Account not present in the database.");
 
             if (!PasswordMatch(user.PasswordSalt, user.PasswordHash, loginDTO.Password))
             {

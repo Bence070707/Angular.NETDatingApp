@@ -1,5 +1,29 @@
-<div class="grid grid-cols-5 gap-10">
-    @for (member of members$ | async; track member.id) {
+@if(paginatedMembers(); as paginatedResult){
+<div class="flex flex-col w-full">
+    <div class="flex justify-between items center">
+        <div class="flex gap-3">
+            <button (click)="openFilterModal()" class="btn btn-primary">Select filters</button>
+            <button (click)="resetFilters()" class="btn btn-neutral">Reset filters</button>
+            <div class="items-center h-fit bg-base-100 px-4 py-2 border-1 rounded-2xl text-primary capitalize">
+                {{displayMessage}}
+            </div>
+        </div>
+        @if(paginatedResult.metadata; as metadata){
+        <app-paginator [pageNumber]="metadata.currentPage" [totalCount]="metadata.totalCount"
+            [pageSize]="metadata.pageSize" [totalPages]="metadata.totalPages" (pageChange)="onPageChange($event)">
+
+        </app-paginator>
+        }
+    </div>
+    @if(paginatedResult.items; as members){
+    <div class="grid grid-cols-5 gap-10">
+        @for (member of members; track member.id) {
         <app-member-card [member]="member"></app-member-card>
+        }
+    </div>
     }
 </div>
+}
+
+<app-filter-modal #filterModal [hidden]="!paginatedMembers()" (closeModal)="closeFilterModal()"
+    (submitData)="onFilterChange($event)"></app-filter-modal>
