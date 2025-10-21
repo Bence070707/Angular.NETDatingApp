@@ -30,10 +30,6 @@ export class MemberProfile implements OnInit, OnDestroy {
     country: ''
   };
 
-  constructor() {
-
-  }
-
   ngOnInit(): void {
     this.editableMember = {
       displayName: this.memberService.member()?.displayName || '',

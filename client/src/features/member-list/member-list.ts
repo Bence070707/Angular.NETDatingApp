@@ -20,6 +20,7 @@ export class MemberList implements OnInit {
   private updatedParams = new MemberParams();
 
   constructor() {
+    this.loadMembers();
     const filters = localStorage.getItem('filters');
     if(filters){
       this.memberParams = {...JSON.parse(filters)};

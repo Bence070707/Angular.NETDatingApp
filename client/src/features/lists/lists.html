@@ -1,1 +1,26 @@
-<p>lists works!</p>
+@if(paginaterdResult(); as paginatedResult){
+    @if(paginatedResult.metadata; as metadata){
+        <app-paginator [hidden]="metadata.totalCount === 0"
+        [pageNumber]="metadata.currentPage"
+        [pageSize]="metadata.pageSize"
+        [totalCount]="metadata.totalCount"
+        [totalPages]="metadata.totalPages"
+        (pageChange)="onPageChange($event)"></app-paginator>
+    }
+
+<div role="tablist" class="tabs tabs-box tabs-lg text-primary w-fit">
+    @for(tab of tabs; track $index){
+        <button role="tab" class="tab" [class.tab-active]="predicate === tab.predicate" (click)="setPredicate(tab.predicate)">{{ tab.label }}</button>
+    }
+</div>
+
+@if(paginatedResult.items; as members){
+    <div class="grid grid-cols-5 gap-6 mt-3">
+        @for(member of members; track member.id){
+            <app-member-card [member]="member"></app-member-card>
+        }
+    </div>
+}@else {
+    There are no result for this filter
+}
+}
