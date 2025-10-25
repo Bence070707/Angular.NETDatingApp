@@ -6,28 +6,22 @@ using API.Entities;
 using API.Entities.DTOs;
 using API.Extensions;
 using API.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
-    public class AccountController(AppDbContext database, IJWTService jwtService) : BaseApiController
+    public class AccountController(UserManager<AppUser> userManager, IJWTService jwtService) : BaseApiController
     {
         [HttpPost("register")]
         public async Task<ActionResult<UserDTO>> Register(RegisterDTO registerDTO)
         {
-            if (await EmailExists(registerDTO.Email))
-            {
-                return BadRequest("Email is already taken");
-            }
-
-            using var hmac = new HMACSHA512();
             var user = new AppUser
             {
                 DisplayName = registerDTO.DisplayName,
                 Email = registerDTO.Email,
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDTO.Password)),
-                PasswordSalt = hmac.Key,
+                UserName = registerDTO.Email,
                 Member = new Member
                 {
                     DisplayName = registerDTO.DisplayName,
@@ -38,43 +32,71 @@ namespace API.Controllers
                 }
             };
 
-            database.Users.Add(user);
-            database.SaveChanges();
+            var result = await userManager.CreateAsync(user, registerDTO.Password);
 
-            return user.AsUserDTO(jwtService.CreateToken(user));
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("identity", error.Description);
+                }
+                return ValidationProblem();
+            }
+
+            await userManager.AddToRoleAsync(user, "Member");
+
+            await SetRefreshTokenCookie(user);
+
+            return await user.AsUserDTO(jwtService);
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDTO)
         {
-            var user = await database.Users.SingleOrDefaultAsync(x => x.Email.ToLower() == loginDTO.Email.ToLower());
-            if (user is null) return BadRequest("Account not present in the database.");
+            var user = await userManager.FindByEmailAsync(loginDTO.Email);
+            if (user is null) return Unauthorized();
 
-            if (!PasswordMatch(user.PasswordSalt, user.PasswordHash, loginDTO.Password))
-            {
-                return Unauthorized("Invalid password");
-            }
+            var result = await userManager.CheckPasswordAsync(user, loginDTO.Password);
+            if (!result) return Unauthorized();
 
-            return user.AsUserDTO(jwtService.CreateToken(user));
+            await SetRefreshTokenCookie(user);
+
+            return await user.AsUserDTO(jwtService);
         }
 
-        private static bool PasswordMatch(byte[] key, byte[] dbPassword, string usrPassword)
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<UserDTO>> RefreshToken()
         {
-            using var hmac = new HMACSHA512(key);
-            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(usrPassword));
-            for (int i = 0; i < computedHash.Length; i++)
-            {
-                if (computedHash[i] != dbPassword[i])
-                {
-                    return false;
-                }
-            }
-            return true;
+            var refreshToken = Request.Cookies["refreshToken"];
+            if (refreshToken is null) return NoContent();
+
+            var user = await userManager.Users
+            .FirstOrDefaultAsync(x => x.RefreshToken == refreshToken && x.RefreshTokenExpiry > DateTime.UtcNow);
+
+            if (user is null) return Unauthorized();
+
+            await SetRefreshTokenCookie(user);
+
+            return await user.AsUserDTO(jwtService);
         }
 
-        private async Task<bool> EmailExists(string email)
+        private async Task SetRefreshTokenCookie(AppUser user)
         {
-            return await database.Users.AnyAsync(x => x.Email.ToLower() == email.ToLower());
+            var refreshToken = jwtService.GenerateRefreshToken();
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+
+            await userManager.UpdateAsync(user);
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
         }
     }
 }

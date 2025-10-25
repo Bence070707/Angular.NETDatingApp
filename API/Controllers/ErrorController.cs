@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,6 +30,13 @@ namespace API.Controllers
         public IActionResult GetBadRequestError()
         {
             return BadRequest("This was not a good request");
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("secretadmin")]
+        public ActionResult<string> GetSecretAdmin()
+        {
+            return "Secret Admin Information";
         }
     }
 }

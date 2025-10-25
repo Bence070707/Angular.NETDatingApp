@@ -4,6 +4,7 @@ export type User = {
   displayName: string;
   token: string;
   imageUrl?: string;
+  roles: string[]
 }
 
 export type LoginCreds = {

@@ -1,14 +1,15 @@
 using System;
 using System.Runtime.ConstrainedExecution;
 using API.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace API.Data;
 
-public class AppDbContext(DbContextOptions<AppDbContext> opts) : DbContext(opts)
+public class AppDbContext(DbContextOptions<AppDbContext> opts) : IdentityDbContext<AppUser>(opts)
 {
-    public DbSet<AppUser> Users { get; set; } = default!;
     public DbSet<Member> Members { get; set; } = default!;
     public DbSet<Photo> Photos { get; set; } = default!;
     public DbSet<MemberLike> Likes { get; set; } = default!;
@@ -17,6 +18,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> opts) : DbContext(opts)
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<IdentityRole>()
+        .HasData(
+            new IdentityRole { Id = "member-id", Name = "Member", NormalizedName = "MEMBER" },
+            new IdentityRole { Id = "moderator-id", Name = "Moderator", NormalizedName = "MODERATOR" },
+            new IdentityRole { Id = "admin-id", Name = "Admin", NormalizedName = "ADMIN" }
+        );
 
         builder.Entity<MemberLike>()
             .HasKey(ml => new { ml.SourceMemberId, ml.TargetMemberId });
@@ -60,7 +68,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> opts) : DbContext(opts)
                 {
                     property.SetValueConverter(dateTimeConverter);
                 }
-                else if(property.ClrType == typeof(DateTime?))
+                else if (property.ClrType == typeof(DateTime?))
                 {
                     property.SetValueConverter(nullableDateTimeConverter);
                 }

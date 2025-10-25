@@ -11,20 +11,24 @@
             </a>
         </div>
         <nav class="flex gap-3 my-2 uppercase text-lg text-white">
-            @if(accountService.getCurrentUser()){
+            @if(accountService.getCurrentUser(); as user){
             <a routerLink="/members" routerLinkActive="text-accent"
                 [routerLinkActiveOptions]="{exact: true}">Matches</a>
             <a routerLink="/lists" routerLinkActive="text-accent">Lists</a>
             <a routerLink="/messages" routerLinkActive="text-accent">Messages</a>
+            @if(user.roles.includes('Admin') || user.roles.includes('Moderator')) {
+
+            <a routerLink="/admin" routerLinkActive="text-accent">Admin</a>
+            }
             }
             <a routerLink="/testerrors" routerLinkActive="text-accent">Test Errors</a>
         </nav>
 
-        
+
 
         @if(loadingService.busyRequestCount() > 0){
         <span class="mx-auto loading loading-xl loading-infinity text-primary"></span>
-    }
+        }
         <div class="flex align-middle ml-auto gap-3">
             <div class="dropdown mr-5 dropdown-end">
                 <button tabindex="1"
@@ -49,7 +53,8 @@
                     <span>{{ user.displayName }}</span>
                 </div>
                 <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                    <li onclick="document.activeElement.blur()"><a routerLink="/members/{{user.id}}">Edit profile</a></li>
+                    <li onclick="document.activeElement.blur()"><a routerLink="/members/{{user.id}}">Edit profile</a>
+                    </li>
                     <li onclick="document.activeElement.blur()"><a (click)="logout()">Logout</a></li>
                 </ul>
             </div>
