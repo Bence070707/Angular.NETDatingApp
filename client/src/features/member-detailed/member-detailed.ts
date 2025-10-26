@@ -5,6 +5,7 @@ import { RouterLink } from "@angular/router";
 import { AgePipe } from '../../core/pipes/age-pipe';
 import { AccountService } from '../../core/services/account-service';
 import { Location } from '@angular/common';
+import { PresenceService } from '../../core/services/presence-service';
 
 @Component({
   selector: 'app-member-detailed',
@@ -19,6 +20,7 @@ export class MemberDetailed implements OnInit {
   private router = inject(Router);
   private location = inject(Location)
   protected title = signal<string | undefined>("Profile");
+  protected presenceService = inject(PresenceService);
   protected isCurrentUser = computed(()=>{
     return this.accountService.getCurrentUser()?.id === this.route.snapshot?.paramMap.get('id');
   })

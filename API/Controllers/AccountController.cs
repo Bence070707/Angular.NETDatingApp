@@ -54,10 +54,10 @@ namespace API.Controllers
         public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDTO)
         {
             var user = await userManager.FindByEmailAsync(loginDTO.Email);
-            if (user is null) return Unauthorized();
+            if (user is null) return BadRequest("Invalid email");
 
             var result = await userManager.CheckPasswordAsync(user, loginDTO.Password);
-            if (!result) return Unauthorized();
+            if (!result) return BadRequest("Invalid password");
 
             await SetRefreshTokenCookie(user);
 

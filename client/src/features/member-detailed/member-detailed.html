@@ -4,8 +4,11 @@
             <img src="{{member.imageUrl || '/user.png'}}" class="rounded-full mx-10 mt-3 object-cover" alt="image of member">
             <div class="card-body">
                 <div class="flex flex-col items-center">
-                    <div class="flex text-2xl text-primary">
+                    <div class="flex text-2xl text-primary items-center">
                         {{member.displayName}}, {{member.dateOfBirth | age}}
+                        @if(presenceService.onlineUsers().includes(member.id)){
+                            <span class="status status-success status-lg ml-3 items-center"></span>
+                        }
                     </div>
                     <div class="text-sm">
                         {{member.city}}, {{member.country}}

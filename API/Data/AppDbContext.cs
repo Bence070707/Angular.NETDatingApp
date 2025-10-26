@@ -14,6 +14,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> opts) : IdentityDbConte
     public DbSet<Photo> Photos { get; set; } = default!;
     public DbSet<MemberLike> Likes { get; set; } = default!;
     public DbSet<Message> Messages { get; set; } = default!;
+    public DbSet<Group> Groups { get; set; } = default!;
+    public DbSet<Connection> Connections { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -31,7 +31,7 @@
             <button [disabled]="!editForm.dirty" (click)="updateProfile()" class="btn btn-success w-2/4 self-center">Save</button>
 
         }@else {
-            <div>{{member.description}}</div>
+            <div>{{member.description || 'No description available'}}</div>
 
         }
     </div>
