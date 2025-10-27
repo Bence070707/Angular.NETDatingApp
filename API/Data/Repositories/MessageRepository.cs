@@ -82,9 +82,4 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
     {
         return context.Connections.Where(x=> x.ConnectionId == connectionid).ExecuteDeleteAsync();
     }
-
-    public async Task<bool> SaveAllAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
 }

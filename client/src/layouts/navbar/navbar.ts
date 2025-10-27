@@ -22,6 +22,7 @@ export class Navbar implements OnInit {
   protected selectedTheme = signal<string>(localStorage.getItem("theme") ?? "light");
   protected loadingService = inject(LoadingService);
   protected themes = themes;
+  protected loading = signal<boolean>(false);
   
   ngOnInit(): void {
     document.documentElement.setAttribute('data-theme', this.selectedTheme());
@@ -36,6 +37,7 @@ export class Navbar implements OnInit {
   }
   
   login(){
+    this.loading.set(true);
     this.accountService.login(this.creds).subscribe({
       next: response => {
         this.creds = { email: '', password: '' };
@@ -45,8 +47,8 @@ export class Navbar implements OnInit {
       error: err => {
         console.error(err);
         this.toasts.showError(err.error);
-      }
-      
+      },
+      complete: () => this.loading.set(false)
     })
   }
   
